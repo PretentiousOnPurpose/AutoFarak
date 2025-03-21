@@ -17,15 +17,15 @@ public:
 	afdtype(int numDims, int * dims, bool requiresGrad);
 	~afdtype();
 
-	afdtype var(double val);
-	afdtype var(double * vec, int dim);
-	afdtype var(double ** mat, int dim1, int dim2);
-	afdtype zeros_like(int dim1, int dim2);
+	static afdtype var(double val);
+	static afdtype var(double * vec, int dim);
+	static afdtype var(double ** mat, int dim1, int dim2);
+	static afdtype zeros_like(int dim1, int dim2);
 
-	afdtype var(double val, bool requiresGrad);
-	afdtype var(double * vec, int dim, bool requiresGrad);
-	afdtype var(double ** mat, int dim1, int dim2, bool requiresGrad);
-	afdtype zeros_like(int dim1, int dim2, bool requiresGrad);
+	static afdtype var(double val, bool requiresGrad);
+	static afdtype var(double * vec, int dim, bool requiresGrad);
+	static afdtype var(double ** mat, int dim1, int dim2, bool requiresGrad);
+	static afdtype zeros_like(int dim1, int dim2, bool requiresGrad);
 
 	void print();
 

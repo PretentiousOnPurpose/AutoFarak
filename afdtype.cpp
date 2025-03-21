@@ -21,6 +21,8 @@ void afdtype::print() {
 		}
 		cout << endl;
 	}
+
+	cout << "Requires Grad: " << this->requiresGrad << endl;
 }
 
 afdtype::afdtype(int numDims, int * dims, bool requiresGrad) {
@@ -36,7 +38,7 @@ afdtype::afdtype(int numDims, int * dims, bool requiresGrad) {
 	}
 }
 
-afdtype::var(double val, bool requiresGrad) {
+afdtype afdtype::var(double val, bool requiresGrad) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	dims[0] = 1;
 	dims[1] = 1;
@@ -48,11 +50,11 @@ afdtype::var(double val, bool requiresGrad) {
 	return d_var;
 }
 
-afdtype::var(double val) {
+afdtype afdtype::var(double val) {
 	return afdtype::var(val, false);
 }
 
-afdtype::var(double * val, int dim, bool requiresGrad) {
+afdtype afdtype::var(double * val, int dim, bool requiresGrad) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	dims[0] = 1;
 	dims[1] = dim;
@@ -64,11 +66,11 @@ afdtype::var(double * val, int dim, bool requiresGrad) {
 	return d_var;
 }
 
-afdtype::var(double * val, int dim) {
+afdtype afdtype::var(double * val, int dim) {
 	return afdtype::var(val, dim, false);
 }
 
-afdtype::var(double ** val, int dim1, int dim2, bool requiresGrad) {
+afdtype afdtype::var(double ** val, int dim1, int dim2, bool requiresGrad) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	dims[0] = dim1;
 	dims[1] = dim2;
@@ -80,11 +82,11 @@ afdtype::var(double ** val, int dim1, int dim2, bool requiresGrad) {
 	return d_var;
 }
 
-afdtype::var(double ** val, int dim1, int dim2) {
+afdtype afdtype::var(double ** val, int dim1, int dim2) {
 	return afdtype::var(val, dim1, dim2, false);
 }
 
-afdtype::zeros_like(int dim1, int dim2, bool requiresGrad) {
+afdtype afdtype::zeros_like(int dim1, int dim2, bool requiresGrad) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	int numDims = -1;
 
@@ -107,16 +109,16 @@ afdtype::zeros_like(int dim1, int dim2, bool requiresGrad) {
 	return d_var;
 }
 
-afdtype::zeros_like(int dim1, int dim2) {
+afdtype afdtype::zeros_like(int dim1, int dim2) {
 	return afdtype::zeros_like(dim1, dim2, false);
 }
 
 afdtype::~afdtype() {
-	for (int j = 0; j < dims[1]; j++) {
-		free(data[j]);
-	}
+//	for (int j = 0; j < dims[1]; j++) {
+//		free(data[j]);
+//	}
 
-	free(data);
+//	free(data);
 
 	data = nullptr;
 }

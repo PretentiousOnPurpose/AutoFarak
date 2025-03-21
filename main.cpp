@@ -3,13 +3,14 @@
 using namespace std;
 
 int main() {
-	afdtype x_1(10.0);
-	
+	afdtype x = afdtype::var(10.0, true);
+
 	double x_d[] = {10.0, 20.0, 30.0};
 
-	afdtype x(&x_d[0], 3);
+	afdtype x1 = afdtype::var(&x_d[0], 3);
 
-	x_1.print();
+
+	x1.print();
 	x.print();
 
 	return 0;
