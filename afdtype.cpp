@@ -26,6 +26,14 @@ void afdtype::print() {
 	cout << "Requires Grad: " << this->requiresGrad << endl;
 }
 
+const double * afdtype::operator[](int idx) const {
+	return this->data[idx];
+}
+
+double * afdtype::operator[](int idx) {
+	return this->data[idx];
+}
+
 afdtype::afdtype(int numDims, int * dims, bool requiresGrad ) {
 	this->numDims = numDims;
 	this->dims = dims;
@@ -79,6 +87,9 @@ afdtype afdtype::zeros(int dim1, int dim2, bool requiresGrad ) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	int numDims = -1;
 
+	dims[0] = dim1;
+	dims[1] = dim2;
+
 	if (dim1 + dim2 == 2) {
 		numDims = 0;
 	} else if ((dim1 == 1) || (dim2 == 1)) {
@@ -101,128 +112,8 @@ afdtype afdtype::zeros(int dim1, int dim2, bool requiresGrad ) {
 afdtype afdtype::zeros_like(const afdtype & val, bool requiresGrad) {
 	return afdtype::zeros(val.dims[0], val.dims[1], requiresGrad);
 }
-/*
-template <typename T>
-afdtype afdtype::operator+(const T & op2) const {
-	double ** data = (double **)calloc(this->dims[0], sizeof(double));
-	bool all_good ;
 
-
-	if ((is_arithmetic<T>::value) || ((this->dims[0] == op2.dims[0]) && (this->dims[1] == op2.dims[1]))) {
-		all_good = true;
-	} else {
-		cout << "Incompatible dimensions" << endl;
-		exit(1);
-	}
-
-	if (all_good) {
-		for (int i = 0; i < this->dims[0]; i++) {
-			data[i] = (double *)calloc(this->dims[1], sizeof(double));
-
-			for (int j = 0; j < this->dims[1]; j++) {
-				if (is_arithmetic<T>::value) {
-					data[i][j] = this->data[i][j] + op2;
-				} else {
-					data[i][j] = this->data[i][j] + op2.data[i][j];
-				}
-			}
-		}
-	}
-
-	return afdtype::var(data, this->dims[0], this->dims[1]);
-}
-
-template <typename T>
-afdtype afdtype::operator-(const T & op2) {
-	double ** data = (double **)calloc(this->dims[0], sizeof(double));
-	bool all_good ;
-
-
-	if ((is_arithmetic<T>::value) || ((this->dims[0] == op2.dims[0]) && (this->dims[1] == op2.dims[1]))) {
-		all_good = true;
-	} else {
-		cout << "Incompatible dimensions" << endl;
-		exit(1);
-	}
-
-	if (all_good) {
-		for (int i = 0; i < this->dims[0]; i++) {
-			data[i] = (double *)calloc(this->dims[1], sizeof(double));
-
-			for (int j = 0; j < this->dims[1]; j++) {
-				if (is_arithmetic<T>::value) {
-					data[i][j] = this->data[i][j] - op2;
-				} else {
-					data[i][j] = this->data[i][j] - op2.data[i][j];
-				}
-			}
-		}
-	}
-
-	return afdtype::var(data, this->dims[0], this->dims[1]);
-}
-
-template <typename T>
-afdtype afdtype::operator*(const T & op2) {
-	double ** data = (double **)calloc(this->dims[0], sizeof(double));
-	bool all_good ;
-
-
-	if ((is_arithmetic<T>::value) || ((this->dims[0] == op2.dims[0]) && (this->dims[1] == op2.dims[1]))) {
-		all_good = true;
-	} else {
-		cout << "Incompatible dimensions" << endl;
-		exit(1);
-	}
-
-	if (all_good) {
-		for (int i = 0; i < this->dims[0]; i++) {
-			data[i] = (double *)calloc(this->dims[1], sizeof(double));
-
-			for (int j = 0; j < this->dims[1]; j++) {
-				if (is_arithmetic<T>::value) {
-					data[i][j] = this->data[i][j] * op2;
-				} else {
-					data[i][j] = this->data[i][j] * op2.data[i][j];
-				}
-			}
-		}
-	}
-
-	return afdtype::var(data, this->dims[0], this->dims[1]);
-}
-
-template <typename T>
-afdtype afdtype::operator/(const T & op2) {
-	double ** data = (double **)calloc(this->dims[0], sizeof(double));
-	bool all_good ;
-
-
-	if ((is_arithmetic<T>::value) || ((this->dims[0] == op2.dims[0]) && (this->dims[1] == op2.dims[1]))) {
-		all_good = true;
-	} else {
-		cout << "Incompatible dimensions" << endl;
-		exit(1);
-	}
-
-	if (all_good) {
-		for (int i = 0; i < this->dims[0]; i++) {
-			data[i] = (double *)calloc(this->dims[1], sizeof(double));
-
-			for (int j = 0; j < this->dims[1]; j++) {
-				if (is_arithmetic<T>::value) {
-					data[i][j] = this->data[i][j] / op2;
-				} else {
-					data[i][j] = this->data[i][j] / op2.data[i][j];
-				}
-			}
-		}
-	}
-
-	return afdtype::var(data, this->dims[0], this->dims[1]);
-}
-*/
-afdtype afdtype::sin(afdtype val) {
+afdtype afdtype::sin(const afdtype & val) {
 	afdtype res = afdtype::zeros_like(val);
 
 	for (int i = 0; i < val.dims[0]; i++) {
@@ -234,7 +125,7 @@ afdtype afdtype::sin(afdtype val) {
 	return res;
 }
 
-afdtype afdtype::cos(afdtype val) {
+afdtype afdtype::cos(const afdtype & val) {
 	afdtype res = afdtype::zeros_like(val);
 
 	for (int i = 0; i < val.dims[0]; i++) {
@@ -245,29 +136,8 @@ afdtype afdtype::cos(afdtype val) {
 
 	return res;
 }
-/*
-template <typename T>
-afdtype afdtype::pow(afdtype val1, T val2) {
-	afdtype res = afdtype::zeros_like(val1);
 
-	for (int i = 0; i < val1.dims[0]; i++) {
-		for (int j = 0; j < val1.dims[1]; j++) {
-			if (is_arithmetic<T>::value) {
-				res.data[i][j] = std::pow(val1.data[i][j], val2);
-			} else if ((val1.dims[0] == val2.dims[0]) && (val1.dims[1] == val2.dims[1])) {
-				res.data[i][j] = power(val1.data[i][j], val2.data[i][j]);
-			} else if (val2.numDims == 0) {
-				res.data[i][j] = pow(val1.data[i][j], val2[0][0]);
-			} else {
-				cout << "Incompatible dimensions" << endl;
-				exit(1);
-			}
-		}
-	}
 
-	return res;
-}
-*/
 afdtype::~afdtype() {
 //	for (int j = 0; j < dims[1]; j++) {
 //		free(data[j]);

@@ -26,6 +26,11 @@ public:
 	static afdtype var(double ** mat, int dim1, int dim2, bool requiresGrad = false);
 	static afdtype zeros(int dim1, int dim2, bool requiresGrad = false);
 	static afdtype zeros_like(const afdtype & val, bool requiresGrad = false);
+	static afdtype sin(const afdtype &);
+	static afdtype cos(const afdtype &);
+	
+	template <typename T>
+	static afdtype pow(const afdtype &, const T &);
 
 	template <typename T>
 	afdtype operator+(const T &) const;
@@ -39,11 +44,8 @@ public:
 	template <typename T>
 	afdtype operator/(const T &) const;
 
-	afdtype sin(afdtype);
-	afdtype cos(afdtype);
-	
-	template <typename T>
-	afdtype pow(afdtype, T);
+	const double * operator[](int idx) const;
+	double * operator[](int idx);
 
 	void print();
 

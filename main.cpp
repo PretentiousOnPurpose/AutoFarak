@@ -3,17 +3,12 @@
 using namespace std;
 
 int main() {
-	double x_d[] = {10.0, 20.0, 30.0};
-	afdtype x1 = afdtype::var(&x_d[0], 3);
-
-	double x_d2[] = {10.0, 20.0, 30.0};
-	afdtype x2 = afdtype::var(&x_d2[0], 3);
-
-	x1.print();
-	x2.print();
-
-	auto x3 = x1 + x2;
-
-
+	double pi = 3.14159;
+	double pi_l[] = {0, 2, 4, 6, 8, 10, 12};
+	auto x3 = afdtype::var(&pi_l[0], 7);
+	
+	x3 = afdtype::pow(x3, 2);
+	x3.print();
+	
 	return 0;
 }
