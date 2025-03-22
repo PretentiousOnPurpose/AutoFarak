@@ -12,7 +12,7 @@ public:
 	bool requiresGrad;
 
 	// global metadata
-	list<afdtype> comp_graph;
+//	list<afdtype> comp_graph;
 
 	// Data
 	double ** data;
@@ -21,24 +21,35 @@ public:
 	afdtype(int numDims, int * dims, bool requiresGrad);
 	~afdtype();
 
-	static afdtype var(double val);
-	static afdtype var(double * vec, int dim);
-	static afdtype var(double ** mat, int dim1, int dim2);
-	static afdtype zeros_like(int dim1, int dim2);
+	static afdtype var(double val, bool requiresGrad = false);
+	static afdtype var(double * vec, int dim, bool requiresGrad = false);
+	static afdtype var(double ** mat, int dim1, int dim2, bool requiresGrad = false);
+	static afdtype zeros(int dim1, int dim2, bool requiresGrad = false);
+	static afdtype zeros_like(const afdtype & val, bool requiresGrad = false);
 
-	static afdtype var(double val, bool requiresGrad);
-	static afdtype var(double * vec, int dim, bool requiresGrad);
-	static afdtype var(double ** mat, int dim1, int dim2, bool requiresGrad);
-	static afdtype zeros_like(int dim1, int dim2, bool requiresGrad);
+	template <typename T>
+	afdtype operator+(const T &) const;
 
-	afdtype operator+(const afdtype &);
-	afdtype operator-(const afdtype &);
-	afdtype operator*(const afdtype &);
-	afdtype operator/(const afdtype &);
+	template <typename T>
+	afdtype operator-(const T &) const;
+
+	template <typename T>
+	afdtype operator*(const T &) const;
+
+	template <typename T>
+	afdtype operator/(const T &) const;
+
+	afdtype sin(afdtype);
+	afdtype cos(afdtype);
+	
+	template <typename T>
+	afdtype pow(afdtype, T);
 
 	void print();
 
 	
 };
+
+#include "afdtype.tpp"
 
 #endif

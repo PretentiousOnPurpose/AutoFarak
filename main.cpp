@@ -12,13 +12,8 @@ int main() {
 	x1.print();
 	x2.print();
 
-	auto x3 = x1 - x2;
-	auto x4 = x1 * x2;
-	auto x5 = x1 / x2;
+	auto x3 = x1 + x2;
 
-	x3.print();
-	x4.print();
-	x5.print();
 
 	return 0;
 }
