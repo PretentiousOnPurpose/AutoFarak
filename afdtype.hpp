@@ -32,6 +32,9 @@ public:
 	template <typename T>
 	static afdtype pow(const afdtype &, const T &);
 
+	template <typename T, typename Func>
+	static afdtype applyElementWiseMathOp(const afdtype *, const T &, Func operation);
+
 	template <typename T>
 	afdtype operator+(const T &) const;
 
