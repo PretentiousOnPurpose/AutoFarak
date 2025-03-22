@@ -114,27 +114,11 @@ afdtype afdtype::zeros_like(const afdtype & val, bool requiresGrad) {
 }
 
 afdtype afdtype::sin(const afdtype & val) {
-	afdtype res = afdtype::zeros_like(val);
-
-	for (int i = 0; i < val.dims[0]; i++) {
-		for (int j = 0; j < val.dims[1]; j++) {
-			res.data[i][j] = std::sin(val.data[i][j]);
-		}
-	}
-
-	return res;
+	return afdtype::applyElementWiseMathOneOp(&val, [](double a) { return std::sin(a); });
 }
 
 afdtype afdtype::cos(const afdtype & val) {
-	afdtype res = afdtype::zeros_like(val);
-
-	for (int i = 0; i < val.dims[0]; i++) {
-		for (int j = 0; j < val.dims[1]; j++) {
-			res.data[i][j] = std::cos(val.data[i][j]);
-		}
-	}
-
-	return res;
+	return afdtype::applyElementWiseMathOneOp(&val, [](double a) { return std::cos(a); });
 }
 
 
