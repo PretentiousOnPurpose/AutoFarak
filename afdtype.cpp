@@ -1,6 +1,7 @@
+
 #include <iostream>
 #include "afdtype.hpp"
-
+#include <cmath>
 using namespace std;
 
 void afdtype::print() {
@@ -25,7 +26,7 @@ void afdtype::print() {
 	cout << "Requires Grad: " << this->requiresGrad << endl;
 }
 
-afdtype::afdtype(int numDims, int * dims, bool requiresGrad) {
+afdtype::afdtype(int numDims, int * dims, bool requiresGrad = false) {
 	this->numDims = numDims;
 	this->dims = dims;
 	this->requiresGrad = requiresGrad;
@@ -38,7 +39,7 @@ afdtype::afdtype(int numDims, int * dims, bool requiresGrad) {
 	}
 }
 
-afdtype afdtype::var(double val, bool requiresGrad) {
+afdtype afdtype::var(double val, bool requiresGrad = false) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	dims[0] = 1;
 	dims[1] = 1;
@@ -50,11 +51,7 @@ afdtype afdtype::var(double val, bool requiresGrad) {
 	return d_var;
 }
 
-afdtype afdtype::var(double val) {
-	return afdtype::var(val, false);
-}
-
-afdtype afdtype::var(double * val, int dim, bool requiresGrad) {
+afdtype afdtype::var(double * val, int dim, bool requiresGrad = false) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	dims[0] = 1;
 	dims[1] = dim;
@@ -66,11 +63,7 @@ afdtype afdtype::var(double * val, int dim, bool requiresGrad) {
 	return d_var;
 }
 
-afdtype afdtype::var(double * val, int dim) {
-	return afdtype::var(val, dim, false);
-}
-
-afdtype afdtype::var(double ** val, int dim1, int dim2, bool requiresGrad) {
+afdtype afdtype::var(double ** val, int dim1, int dim2, bool requiresGrad = false) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	dims[0] = dim1;
 	dims[1] = dim2;
@@ -82,11 +75,7 @@ afdtype afdtype::var(double ** val, int dim1, int dim2, bool requiresGrad) {
 	return d_var;
 }
 
-afdtype afdtype::var(double ** val, int dim1, int dim2) {
-	return afdtype::var(val, dim1, dim2, false);
-}
-
-afdtype afdtype::zeros_like(int dim1, int dim2, bool requiresGrad) {
+afdtype afdtype::zeros_like(int dim1, int dim2, bool requiresGrad = false) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	int numDims = -1;
 
@@ -109,8 +98,167 @@ afdtype afdtype::zeros_like(int dim1, int dim2, bool requiresGrad) {
 	return d_var;
 }
 
-afdtype afdtype::zeros_like(int dim1, int dim2) {
-	return afdtype::zeros_like(dim1, dim2, false);
+template <typename T>
+afdtype afdtype::operator+(const T & op2) {
+	double ** data = (double **)calloc(this->dims[0], sizeof(double));
+	bool all_good = false;
+
+
+	if ((is_arithemtic<T>::value) || ((this->dims[0] == op2.dims[0]) && (this->dims[1] == op2.dims[1]))) {
+		all_good = true;
+	} else {
+		cout << "Incompatible dimensions" << endl;
+		exit(1);
+	}
+
+	if (all_good) {
+		for (int i = 0; i < this->dims[0]; i++) {
+			data[i] = (double *)calloc(this->dims[1], sizeof(double));
+
+			for (int j = 0; j < this->dims[1]; j++) {
+				if (is_arithmetic<T>::value) {
+					data[i][j] = this->data[i][j] + op2;
+				} else {
+					data[i][j] = this->data[i][j] + op2.data[i][j];
+				}
+			}
+		}
+	}
+
+	return afdtype::var(data, this->dims[0], this->dims[1]);
+}
+
+template <typename T>
+afdtype afdtype::operator-(const T & op2) {
+	double ** data = (double **)calloc(this->dims[0], sizeof(double));
+	bool all_good = false;
+
+
+	if ((is_arithemtic<T>::value) || ((this->dims[0] == op2.dims[0]) && (this->dims[1] == op2.dims[1]))) {
+		all_good = true;
+	} else {
+		cout << "Incompatible dimensions" << endl;
+		exit(1);
+	}
+
+	if (all_good) {
+		for (int i = 0; i < this->dims[0]; i++) {
+			data[i] = (double *)calloc(this->dims[1], sizeof(double));
+
+			for (int j = 0; j < this->dims[1]; j++) {
+				if (is_arithmetic<T>::value) {
+					data[i][j] = this->data[i][j] - op2;
+				} else {
+					data[i][j] = this->data[i][j] - op2.data[i][j];
+				}
+			}
+		}
+	}
+
+	return afdtype::var(data, this->dims[0], this->dims[1]);
+}
+
+template <typename T>
+afdtype afdtype::operator*(const T & op2) {
+	double ** data = (double **)calloc(this->dims[0], sizeof(double));
+	bool all_good = false;
+
+
+	if ((is_arithemtic<T>::value) || ((this->dims[0] == op2.dims[0]) && (this->dims[1] == op2.dims[1]))) {
+		all_good = true;
+	} else {
+		cout << "Incompatible dimensions" << endl;
+		exit(1);
+	}
+
+	if (all_good) {
+		for (int i = 0; i < this->dims[0]; i++) {
+			data[i] = (double *)calloc(this->dims[1], sizeof(double));
+
+			for (int j = 0; j < this->dims[1]; j++) {
+				if (is_arithmetic<T>::value) {
+					data[i][j] = this->data[i][j] * op2;
+				} else {
+					data[i][j] = this->data[i][j] * op2.data[i][j];
+				}
+			}
+		}
+	}
+
+	return afdtype::var(data, this->dims[0], this->dims[1]);
+}
+
+template <typename T>
+afdtype afdtype::operator/(const T & op2) {
+	double ** data = (double **)calloc(this->dims[0], sizeof(double));
+	bool all_good = false;
+
+
+	if ((is_arithemtic<T>::value) || ((this->dims[0] == op2.dims[0]) && (this->dims[1] == op2.dims[1]))) {
+		all_good = true;
+	} else {
+		cout << "Incompatible dimensions" << endl;
+		exit(1);
+	}
+
+	if (all_good) {
+		for (int i = 0; i < this->dims[0]; i++) {
+			data[i] = (double *)calloc(this->dims[1], sizeof(double));
+
+			for (int j = 0; j < this->dims[1]; j++) {
+				if (is_arithmetic<T>::value) {
+					data[i][j] = this->data[i][j] / op2;
+				} else {
+					data[i][j] = this->data[i][j] / op2.data[i][j];
+				}
+			}
+		}
+	}
+
+	return afdtype::var(data, this->dims[0], this->dims[1]);
+}
+
+afdtype afdtype::sin(afdtype val) {
+	afdtype res = afdtype::zeros_like(val);
+
+	for (int i = 0; i < val.dims[0]; i++) {
+		for (int j = 0; j < val.dims[1]; j++) {
+			res.data[i][j] = math::sin(val.data[i][j]);
+		}
+	}
+
+	return res;
+}
+
+afdtype afdtype::cos(afdtype val) {
+	afdtype res = afdtype::zeros_like(val);
+
+	for (int i = 0; i < val.dims[0]; i++) {
+		for (int j = 0; j < val.dims[1]; j++) {
+			res.data[i][j] = math::cos(val.data[i][j]);
+		}
+	}
+
+	return res;
+}
+
+template <typename T>
+afdtype afdtype::pow(afdtype val1, T val2) {
+	afdtype res = afdtype::zeros_like(val1);
+
+	for (int i = 0; i < val1.dims[0]; i++) {
+		for (int j = 0; j < val1.dims[1]; j++) {
+			if (is_arithmetic<T>::value) {
+				res.data[i][j] = math::pow(val1.data[i][j], val2);
+			} else if ((val1.dims[0] == val2.dims[0]) && (val1.dims[1] == val2.dims[1])) {
+				res.data[i][j] = math::power(val1.data[i][j], val2.data[i][j]);
+			} else if (val2.numDims == 0) {
+				res.data[i][j] = math::pow(val1[i][j], val2[0][0])
+			}
+		}
+	}
+
+	return res;
 }
 
 afdtype::~afdtype() {

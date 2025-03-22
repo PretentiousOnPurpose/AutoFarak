@@ -2,6 +2,7 @@
 #define AFDTYPE_H
 
 #include <iostream>
+#include <list>
 
 class afdtype {
 public:
@@ -9,6 +10,9 @@ public:
 	int numDims;
 	int * dims;
 	bool requiresGrad;
+
+	// global metadata
+	list<afdtype> comp_graph;
 
 	// Data
 	double ** data;
@@ -26,6 +30,11 @@ public:
 	static afdtype var(double * vec, int dim, bool requiresGrad);
 	static afdtype var(double ** mat, int dim1, int dim2, bool requiresGrad);
 	static afdtype zeros_like(int dim1, int dim2, bool requiresGrad);
+
+	afdtype operator+(const afdtype &);
+	afdtype operator-(const afdtype &);
+	afdtype operator*(const afdtype &);
+	afdtype operator/(const afdtype &);
 
 	void print();
 
