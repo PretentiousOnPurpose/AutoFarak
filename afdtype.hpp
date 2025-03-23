@@ -13,7 +13,7 @@ public:
 	int * dims;
 	bool requiresGrad;
 	int typeVar; // 0 - constant, 1 - variable
-	vector<afdtype> deps;
+	vector<const afdtype *> b_deps;
 
 	// global metadata
 //	list<afdtype> comp_graph;
