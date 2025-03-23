@@ -34,10 +34,11 @@ double * afdtype::operator[](int idx) {
 	return this->data[idx];
 }
 
-afdtype::afdtype(int numDims, int * dims, bool requiresGrad ) {
+afdtype::afdtype(int numDims, int * dims, bool typeVar, bool requiresGrad ) {
 	this->numDims = numDims;
 	this->dims = dims;
 	this->requiresGrad = requiresGrad;
+	this->typeVar = typeVar;
 
 	if (numDims == 0) {
 		data = (double **)calloc(1, sizeof(double));
@@ -47,43 +48,43 @@ afdtype::afdtype(int numDims, int * dims, bool requiresGrad ) {
 	}
 }
 
-afdtype afdtype::var(double val, bool requiresGrad ) {
+afdtype afdtype::var(double val, bool typeVar, bool requiresGrad ) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	dims[0] = 1;
 	dims[1] = 1;
 
-	afdtype d_var(0, dims, requiresGrad);
+	afdtype d_var(0, dims, typeVar, requiresGrad);
 
 	d_var.data[0][0] = val;
 
 	return d_var;
 }
 
-afdtype afdtype::var(double * val, int dim, bool requiresGrad ) {
+afdtype afdtype::var(double * val, int dim, bool typeVar, bool requiresGrad ) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	dims[0] = 1;
 	dims[1] = dim;
 
-	afdtype d_var(1, dims, requiresGrad);
+	afdtype d_var(1, dims, typeVar, requiresGrad);
 
 	d_var.data[0] = val;
 
 	return d_var;
 }
 
-afdtype afdtype::var(double ** val, int dim1, int dim2, bool requiresGrad ) {
+afdtype afdtype::var(double ** val, int dim1, int dim2, bool typeVar, bool requiresGrad ) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	dims[0] = dim1;
 	dims[1] = dim2;
 
-	afdtype d_var(2, dims, requiresGrad);
+	afdtype d_var(2, dims, typeVar, requiresGrad);
 
 	d_var.data = val;
 	
 	return d_var;
 }
 
-afdtype afdtype::zeros(int dim1, int dim2, bool requiresGrad ) {
+afdtype afdtype::zeros(int dim1, int dim2, bool typeVar, bool requiresGrad ) {
 	int * dims = (int *)calloc(2, sizeof(int));
 	int numDims = -1;
 
@@ -98,7 +99,7 @@ afdtype afdtype::zeros(int dim1, int dim2, bool requiresGrad ) {
 		numDims = 2;
 	}
 
-	afdtype d_var(numDims, dims, requiresGrad);
+	afdtype d_var(numDims, dims, typeVar, requiresGrad);
 
 	d_var.data = (double **)calloc(dim1, sizeof(double));
 	
@@ -110,7 +111,7 @@ afdtype afdtype::zeros(int dim1, int dim2, bool requiresGrad ) {
 }
 
 afdtype afdtype::zeros_like(const afdtype & val, bool requiresGrad) {
-	return afdtype::zeros(val.dims[0], val.dims[1], requiresGrad);
+	return afdtype::zeros(val.dims[0], val.dims[1], val.typeVar, requiresGrad);
 }
 
 afdtype afdtype::sin(const afdtype & val) {
@@ -120,6 +121,7 @@ afdtype afdtype::sin(const afdtype & val) {
 afdtype afdtype::cos(const afdtype & val) {
 	return afdtype::applyElementWiseMathOneOp(&val, [](double a) { return std::cos(a); });
 }
+
 
 
 afdtype::~afdtype() {

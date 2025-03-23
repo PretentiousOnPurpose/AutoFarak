@@ -17,24 +17,21 @@ afdtype afdtype::applyElementWiseMathOneOp(const afdtype * val, Func operation) 
 
 template <typename T, typename Func>
 afdtype afdtype::applyElementWiseMathTwoOps(const afdtype * val, const T & op2, Func operation) {
-	afdtype res = afdtype::zeros_like(*val);
-	
-	if constexpr (is_arithmetic<T>::value) {		
-		for (int i = 0; i < val->dims[0]; i++) {
-			for (int j = 0; j < val->dims[1]; j++) {
-				res.data[i][j] = operation(val->data[i][j], op2);
-			}
-		}
-	} else if (is_same<T, afdtype>::value) {
-		for (int i = 0; i < val->dims[0]; i++) {
-			for (int j = 0; j < val->dims[1]; j++) {
-				res.data[i][j] = operation(val->data[i][j], op2.data[i][j]);
-			}
-		}
-	} else {
-		cout << "Invalid data type" << endl;
-	}
+	afdtype res = afdtype::zeros_like(*val);	
+	afdtype * op2_n = nullptr;
 
+	if constexpr (is_arithmetic<T>::value) {		
+		op2_n = &afdtype::var(op2);
+	} else {
+		op2_n = &op2;
+	}
+	
+	for (int i = 0; i < val->dims[0]; i++) {	
+		for (int j = 0; j < val->dims[1]; j++) {
+			res.data[i][j] = operation(val->data[i][j], op2_n->data[i][j]);
+		}
+	}
+	
 	return res;	
 }
 
