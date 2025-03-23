@@ -14,7 +14,7 @@ public:
 	bool requiresGrad;
 	int typeVar; // 0 - constant, 1 - variable
 
-	afdtype * grad = nullptr;
+	afdtype * grad;
 
 	// Data
 	double ** data;
@@ -34,7 +34,7 @@ public:
 	static afdtype var(double * vec, int dim, bool typeVar = true, bool requiresGrad = false);
 	static afdtype var(double ** mat, int dim1, int dim2, bool typeVar = true, bool requiresGrad = false);
 	static afdtype zeros(int dim1, int dim2, bool typeVar = true, bool requiresGrad = false);
-	static afdtype zeros_like(const afdtype & val, bool requiresGrad = false);
+	static afdtype zeros_like(const afdtype & val);
 	static afdtype sin(const afdtype &);
 	static afdtype sin_bwd(const afdtype &);
 	static afdtype cos(const afdtype &);

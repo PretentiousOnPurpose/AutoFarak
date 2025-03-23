@@ -9,7 +9,7 @@ int main() {
 	auto x1 = afdtype::var(&pi_l[0], 6);
 	x1.requiresGrad = true;
 
-	auto x3 = afdtype::pow(x1, 2);
+	auto x3 = afdtype::pow(x1, 3);
 	x3.print();
 
 	

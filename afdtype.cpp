@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include "afdtype.hpp"
 #include <cmath>
@@ -8,12 +7,16 @@ void afdtype::print() {
 	if (numDims == 0) {
 		cout << data[0][0] << endl;
 	} else if (numDims == 1) {
+		cout << "Data: ";
 		for (int i = 0; i < dims[1]; i++) {
 			cout << data[0][i] << " ";
 		}
+		cout << endl << "Grad: ";
+		for (int i = 0; i < dims[1]; i++) {
+			cout << grad->data[0][i] << " ";
+		}
 		cout << endl;
 	} else {
-
 		for (int i = 0; i < dims[0]; i++) {
 			for (int j = 0; j < dims[1]; j++) {
 				cout << data[i][j] << " ";
@@ -41,7 +44,10 @@ afdtype::afdtype() {
 	this->typeVar = false;
 	this->data = nullptr;
 	
-	this->grad = nullptr;
+//	afdtype grad_d;
+
+//	this->grad = (afdtype *)calloc(1, sizeof(afdtype));
+//	*(this->grad) = grad_d;
 }
 
 afdtype::afdtype(int numDims, int * dims, bool typeVar, bool requiresGrad ) {
@@ -50,7 +56,10 @@ afdtype::afdtype(int numDims, int * dims, bool typeVar, bool requiresGrad ) {
 	this->requiresGrad = requiresGrad;
 	this->typeVar = typeVar;
 
-	this->grad = nullptr;
+	afdtype grad_d;
+
+	this->grad = (afdtype *)calloc(1, sizeof(afdtype));
+	*(this->grad) = grad_d;
 
 	if (numDims == 0) {
 		data = (double **)calloc(1, sizeof(double));
@@ -122,8 +131,8 @@ afdtype afdtype::zeros(int dim1, int dim2, bool typeVar, bool requiresGrad ) {
 	return d_var;
 }
 
-afdtype afdtype::zeros_like(const afdtype & val, bool requiresGrad) {
-	return afdtype::zeros(val.dims[0], val.dims[1], val.typeVar, requiresGrad);
+afdtype afdtype::zeros_like(const afdtype & val) {
+	return afdtype::zeros(val.dims[0], val.dims[1], val.typeVar, val.requiresGrad);
 }
 
 afdtype afdtype::sin(const afdtype & val) {
@@ -134,7 +143,9 @@ afdtype afdtype::sin(const afdtype & val) {
 }
 
 afdtype afdtype::sin_bwd(const afdtype & val) {
-	return afdtype::cos(val);
+	afdtype res = afdtype::applyElementWiseMathOneOp(&val, [](double a) { return std::cos(a); });
+
+	return res;
 }
 
 afdtype afdtype::cos(const afdtype & val) {
@@ -145,11 +156,16 @@ afdtype afdtype::cos(const afdtype & val) {
 }
 
 afdtype afdtype::cos_bwd(const afdtype & val) {
-	return afdtype::sin(val) * -1;
+	afdtype res = afdtype::applyElementWiseMathOneOp(&val, [](double a) { return std::sin(a); });
+
+	return res * -1;
 }
 
 afdtype afdtype::pow_bwd(const afdtype & val1, const afdtype & op2) {
-	return op2 * afdtype::pow(val1, op2 - 1);
+	afdtype res = afdtype::applyElementWiseMathTwoOps(&val1, op2 - 1, [](double a, double b) { return std::pow(a, b); });
+	res = res * op2;
+
+	return res;
 }
 
 afdtype::~afdtype() {
