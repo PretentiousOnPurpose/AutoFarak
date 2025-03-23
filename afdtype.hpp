@@ -13,11 +13,8 @@ public:
 	int * dims;
 	bool requiresGrad;
 	int typeVar; // 0 - constant, 1 - variable
-	vector<const afdtype *> b_deps;
 
-	// global metadata
-//	list<afdtype> comp_graph;
-
+	afdtype * grad = nullptr;
 
 	// Data
 	double ** data;
@@ -25,11 +22,12 @@ public:
 	// Forward and Backward Fns
 //	afdtype (*fwdFn)(const afdtype... args);
 //	afdtype (*bwdFn)(const afdtype... args);
-	std::function<afdtype(const afdtype &)> fwdFn_1;
-	std::function<afdtype(const afdtype &, const afdtype &)> fwdFn_2;
+	std::function<afdtype(const afdtype &)> bwdFn_1;
+	std::function<afdtype(const afdtype &, const afdtype &)> bwdFn_2;
 
 	//Constructors and Methods
 	afdtype(int numDims, int * dims, bool typeVar, bool requiresGrad);
+	afdtype();
 	~afdtype();
 
 	static afdtype var(double val, bool typeVar = true, bool requiresGrad = false);
@@ -38,10 +36,14 @@ public:
 	static afdtype zeros(int dim1, int dim2, bool typeVar = true, bool requiresGrad = false);
 	static afdtype zeros_like(const afdtype & val, bool requiresGrad = false);
 	static afdtype sin(const afdtype &);
+	static afdtype sin_bwd(const afdtype &);
 	static afdtype cos(const afdtype &);
+	static afdtype cos_bwd(const afdtype &);
 
 	template <typename T>
 	static afdtype pow(const afdtype &, const T &);
+
+	static afdtype pow_bwd(const afdtype &, const afdtype &);
 
 	template <typename T, typename Func>
 	static afdtype applyElementWiseMathTwoOps(const afdtype *, const T &, Func operation);
@@ -61,7 +63,7 @@ public:
 	template <typename T>
 	afdtype operator/(const T &) const;
 
-	const double * operator[](int idx) const;
+	double * operator[](const int idx) const;
 	double * operator[](int idx);
 
 	void print();
