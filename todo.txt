@@ -1,0 +1,1 @@
+create a new data structure which is static and tracks all the ops and datas in an efficiet manner for backward pass

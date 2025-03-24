@@ -14,6 +14,7 @@ public:
 	bool requiresGrad;
 	int typeVar; // 0 - constant, 1 - variable
 
+	vector<afdtype> b_deps;
 	afdtype * grad;
 
 	// Data

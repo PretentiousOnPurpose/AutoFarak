@@ -12,6 +12,8 @@ afdtype afdtype::applyElementWiseMathOneOp(const afdtype * val, Func operation) 
 		}
 	}
 
+	res.b_deps.push_back(*val);
+
 	return res;
 }
 
@@ -35,7 +37,10 @@ afdtype afdtype::applyElementWiseMathTwoOps(const afdtype * val, const T & op2, 
 			}
 		}
 	}
-	
+
+	res.b_deps.push_back(*val);
+	res.b_deps.push_back(op2_n);
+		
 	return res;	
 }
 
